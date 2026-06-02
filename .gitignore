@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.worktrees/
+coverage/
+*.log
+
+# UniApp build artifacts
+frontend/uniapp/unpackage/
+
+# Local database and import scratch files
+data/import/generated/
+data/import/private/
