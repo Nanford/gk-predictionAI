@@ -1,0 +1,190 @@
+:root {
+  color: #17345f;
+  background: #f5f8ff;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+page {
+  min-height: 100%;
+  background: #f5f8ff;
+  color: #17345f;
+}
+
+.page {
+  max-width: 780px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px 18px calc(34px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.hero {
+  padding: 25px 22px;
+  color: #fff;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #1846aa, #3577e8);
+  box-shadow: 0 14px 34px rgba(35, 86, 179, 0.2);
+}
+
+.hero-title {
+  display: block;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.hero-subtitle {
+  display: block;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.card {
+  margin-top: 15px;
+  padding: 17px;
+  border: 1px solid #e1eaf9;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(38, 75, 127, 0.06);
+}
+
+.section-title,
+.title {
+  display: block;
+  color: #17345f;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.label,
+.meta,
+.warning {
+  display: block;
+  margin-top: 6px;
+  color: #72819b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.warning {
+  color: #a3650b;
+}
+
+.field {
+  margin-top: 14px;
+}
+
+.input,
+.picker {
+  margin-top: 7px;
+  padding: 12px;
+  border: 1px solid #d9e4f5;
+  border-radius: 12px;
+  background: #f9fbff;
+  font-size: 15px;
+}
+
+.grid-two,
+.action-row,
+.card-heading,
+.probability-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grid-two > view {
+  flex: 1;
+}
+
+.button {
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 40px;
+}
+
+.button::after {
+  border: 0;
+}
+
+.button-primary {
+  color: #fff;
+  background: #2457d6;
+}
+
+.button-light {
+  color: #2457d6;
+  background: #edf3ff;
+}
+
+.primary-wide {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.risk-tag {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.risk-safe {
+  color: #116449;
+  background: #ddf5ed;
+}
+
+.risk-steady {
+  color: #2457d6;
+  background: #e7efff;
+}
+
+.risk-sprint {
+  color: #a65b05;
+  background: #fff0d7;
+}
+
+.risk-muted {
+  color: #667085;
+  background: #eef1f5;
+}
+
+.probability {
+  display: block;
+  margin-top: 3px;
+  color: #2457d6;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.range {
+  color: #72819b;
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: right;
+}
+
+.range text {
+  display: block;
+}
+
+.disclaimer {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  color: #667085;
+  background: #eef3fb;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.empty {
+  padding: 35px 12px;
+  color: #8794aa;
+  text-align: center;
+}

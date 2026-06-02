@@ -1,0 +1,346 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum VerificationStatus {
+  draft
+  verified
+  rejected
+}
+
+enum SubjectType {
+  physics
+  history
+}
+
+enum PredictionScope {
+  university_min_threshold
+  group
+  major
+}
+
+enum LedgerType {
+  grant
+  reserve
+  consume
+  release
+  topup
+}
+
+model Province {
+  id                Int                @id @default(autoincrement())
+  code              String             @unique @db.VarChar(12)
+  name              String             @db.VarChar(40)
+  examMode          String             @db.VarChar(80)
+  scoreTotal        Int
+  rules             ProvinceRule[]
+  scoreRankSegments ScoreRankSegment[]
+  admissionHistory  AdmissionHistory[]
+  admissionPlans    AdmissionPlan[]
+  predictions       PredictionRecord[]
+  volunteerLists    VolunteerList[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model ProvinceRule {
+  id          Int      @id @default(autoincrement())
+  provinceId  Int
+  year        Int
+  batch       String   @db.VarChar(40)
+  ruleSummary String   @db.Text
+  province    Province @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([provinceId, year, batch])
+}
+
+model ScoreRankSegment {
+  id              Int          @id @default(autoincrement())
+  provinceId      Int
+  year            Int
+  subjectType     SubjectType
+  score           Int
+  sameScoreCount  Int
+  cumulativeRank  Int
+  sourceId        Int
+  verification    VerificationStatus @default(draft)
+  importBatchId   Int?
+  province        Province     @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  source          DataSource   @relation(fields: [sourceId], references: [id])
+  importBatch     ImportBatch? @relation(fields: [importBatchId], references: [id])
+
+  @@unique([provinceId, year, subjectType, score])
+  @@index([provinceId, year, subjectType, cumulativeRank])
+}
+
+model University {
+  id               Int               @id @default(autoincrement())
+  code             String            @unique @db.VarChar(32)
+  name             String            @db.VarChar(120)
+  authority        String?           @db.VarChar(120)
+  provinceName     String            @db.VarChar(40)
+  city             String            @db.VarChar(60)
+  educationLevel   String            @db.VarChar(40)
+  levelTags        Json?
+  officialUrl      String?           @db.VarChar(500)
+  groups           UniversityGroup[]
+  admissionHistory AdmissionHistory[]
+  admissionPlans   AdmissionPlan[]
+  predictions      PredictionRecord[]
+  volunteerItems   VolunteerItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([provinceName, educationLevel])
+  @@index([name])
+}
+
+model UniversityGroup {
+  id               Int               @id @default(autoincrement())
+  universityId     Int
+  code             String            @db.VarChar(40)
+  name             String            @db.VarChar(120)
+  subjectType      SubjectType
+  subjectRequirements String?        @db.VarChar(200)
+  university       University        @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  groupMajors      GroupMajor[]
+  admissionHistory AdmissionHistory[]
+  admissionPlans   AdmissionPlan[]
+  predictions      PredictionRecord[]
+  volunteerItems   VolunteerItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([universityId, code, subjectType])
+}
+
+model Major {
+  id               Int               @id @default(autoincrement())
+  code             String            @unique @db.VarChar(40)
+  name             String            @db.VarChar(120)
+  category         String?           @db.VarChar(80)
+  degreeType       String?           @db.VarChar(60)
+  groupMajors      GroupMajor[]
+  admissionHistory AdmissionHistory[]
+  admissionPlans   AdmissionPlan[]
+  predictions      PredictionRecord[]
+  volunteerItems   VolunteerItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model GroupMajor {
+  id         Int             @id @default(autoincrement())
+  groupId    Int
+  majorId    Int
+  group      UniversityGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  major      Major           @relation(fields: [majorId], references: [id], onDelete: Cascade)
+  createdAt  DateTime        @default(now())
+
+  @@unique([groupId, majorId])
+}
+
+model AdmissionHistory {
+  id            Int                @id @default(autoincrement())
+  provinceId    Int
+  universityId  Int
+  groupId       Int?
+  majorId       Int?
+  year          Int
+  batch         String             @db.VarChar(40)
+  subjectType   SubjectType
+  minScore      Int?
+  minRank       Int?
+  avgScore      Int?
+  avgRank       Int?
+  maxScore      Int?
+  planCount     Int?
+  sourceId      Int
+  verification  VerificationStatus @default(draft)
+  isDemo        Boolean            @default(false)
+  importBatchId Int?
+  province      Province           @relation(fields: [provinceId], references: [id])
+  university    University         @relation(fields: [universityId], references: [id])
+  group         UniversityGroup?   @relation(fields: [groupId], references: [id])
+  major         Major?             @relation(fields: [majorId], references: [id])
+  source        DataSource         @relation(fields: [sourceId], references: [id])
+  importBatch   ImportBatch?       @relation(fields: [importBatchId], references: [id])
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@unique([provinceId, universityId, groupId, majorId, year, batch, subjectType])
+  @@index([provinceId, subjectType, universityId, groupId, majorId])
+}
+
+model AdmissionPlan {
+  id            Int                @id @default(autoincrement())
+  provinceId    Int
+  universityId  Int
+  groupId       Int?
+  majorId       Int?
+  year          Int
+  batch         String             @db.VarChar(40)
+  subjectType   SubjectType
+  planCount     Int
+  tuition       Int?
+  duration      String?            @db.VarChar(40)
+  sourceId      Int
+  verification  VerificationStatus @default(draft)
+  isDemo        Boolean            @default(false)
+  importBatchId Int?
+  province      Province           @relation(fields: [provinceId], references: [id])
+  university    University         @relation(fields: [universityId], references: [id])
+  group         UniversityGroup?   @relation(fields: [groupId], references: [id])
+  major         Major?             @relation(fields: [majorId], references: [id])
+  source        DataSource         @relation(fields: [sourceId], references: [id])
+  importBatch   ImportBatch?       @relation(fields: [importBatchId], references: [id])
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@unique([provinceId, universityId, groupId, majorId, year, batch, subjectType])
+}
+
+model DataSource {
+  id                Int                @id @default(autoincrement())
+  name              String             @db.VarChar(160)
+  url               String             @unique @db.VarChar(500)
+  publisher         String             @db.VarChar(160)
+  publishedAt       DateTime?
+  verification      VerificationStatus @default(draft)
+  scoreRankSegments ScoreRankSegment[]
+  admissionHistory  AdmissionHistory[]
+  admissionPlans    AdmissionPlan[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model ImportBatch {
+  id                Int                @id @default(autoincrement())
+  kind              String             @db.VarChar(60)
+  filename          String             @db.VarChar(260)
+  checksum          String             @unique @db.VarChar(64)
+  status            String             @db.VarChar(40)
+  importedRows      Int                @default(0)
+  scoreRankSegments ScoreRankSegment[]
+  admissionHistory  AdmissionHistory[]
+  admissionPlans    AdmissionPlan[]
+  createdAt         DateTime           @default(now())
+  completedAt       DateTime?
+}
+
+model User {
+  id             Int                @id @default(autoincrement())
+  status         String             @default("active") @db.VarChar(20)
+  sessions       AnonymousSession[]
+  quota          UserAiQuota?
+  ledger         AiUsageLedger[]
+  predictions    PredictionRecord[]
+  volunteerLists VolunteerList[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model AnonymousSession {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tokenHash String   @unique @db.Char(64)
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserAiQuota {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  available Int      @default(0)
+  reserved  Int      @default(0)
+  consumed  Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+}
+
+model AiUsageLedger {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  predictionId Int?
+  type         LedgerType
+  amount       Int
+  note         String     @db.VarChar(240)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prediction   PredictionRecord? @relation(fields: [predictionId], references: [id])
+  createdAt    DateTime   @default(now())
+}
+
+model PredictionRecord {
+  id                 Int             @id @default(autoincrement())
+  userId             Int
+  provinceId         Int
+  universityId       Int
+  groupId            Int?
+  majorId            Int?
+  year               Int
+  subjectType        SubjectType
+  score              Int?
+  rank               Int
+  scope              PredictionScope
+  probability        Int?
+  probabilityLow     Int?
+  probabilityHigh    Int?
+  riskLabel          String          @db.VarChar(80)
+  confidenceLevel    String          @db.VarChar(40)
+  contextHash        String          @db.Char(64)
+  explanation        Json?
+  explanationSource  String?         @db.VarChar(20)
+  user               User            @relation(fields: [userId], references: [id])
+  province           Province        @relation(fields: [provinceId], references: [id])
+  university         University      @relation(fields: [universityId], references: [id])
+  group              UniversityGroup? @relation(fields: [groupId], references: [id])
+  major              Major?          @relation(fields: [majorId], references: [id])
+  ledger             AiUsageLedger[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([contextHash])
+}
+
+model VolunteerList {
+  id          Int             @id @default(autoincrement())
+  userId      Int
+  provinceId  Int
+  year        Int
+  subjectType SubjectType
+  score       Int?
+  rank        Int
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  province    Province        @relation(fields: [provinceId], references: [id])
+  items       VolunteerItem[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model VolunteerItem {
+  id           Int              @id @default(autoincrement())
+  listId       Int
+  universityId Int
+  groupId      Int?
+  majorId      Int?
+  probability Int?
+  riskLabel    String           @db.VarChar(80)
+  sortOrder    Int
+  list         VolunteerList    @relation(fields: [listId], references: [id], onDelete: Cascade)
+  university   University       @relation(fields: [universityId], references: [id])
+  group        UniversityGroup? @relation(fields: [groupId], references: [id])
+  major        Major?           @relation(fields: [majorId], references: [id])
+  createdAt    DateTime         @default(now())
+
+  @@unique([listId, universityId, groupId, majorId])
+}

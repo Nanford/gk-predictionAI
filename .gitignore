@@ -6,6 +6,9 @@ dist/
 .worktrees/
 coverage/
 *.log
+server/src/generated/
+.playwright-cli/
+output/playwright/
 
 # UniApp build artifacts
 frontend/uniapp/unpackage/

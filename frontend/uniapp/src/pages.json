@@ -1,0 +1,46 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "志愿预测"
+      }
+    },
+    {
+      "path": "pages/results/index",
+      "style": {
+        "navigationBarTitleText": "院校预测结果"
+      }
+    },
+    {
+      "path": "pages/university/index",
+      "style": {
+        "navigationBarTitleText": "院校详情"
+      }
+    },
+    {
+      "path": "pages/ai/index",
+      "style": {
+        "navigationBarTitleText": "AI 解读"
+      }
+    },
+    {
+      "path": "pages/volunteers/index",
+      "style": {
+        "navigationBarTitleText": "志愿单"
+      }
+    },
+    {
+      "path": "pages/quota/index",
+      "style": {
+        "navigationBarTitleText": "AI 使用额度"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "高考志愿 AI 预测",
+    "navigationBarBackgroundColor": "#F5F8FF",
+    "backgroundColor": "#F5F8FF"
+  }
+}

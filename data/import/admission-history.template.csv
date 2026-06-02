@@ -1,0 +1,2 @@
+province_code,university_code,group_code,major_code,year,batch,subject_type,min_score,min_rank,avg_score,avg_rank,max_score,plan_count,source_url,verification,is_demo
+44,4144010561,201,,2025,本科批,physics,0,0,,,,0,https://eea.gd.gov.cn/,draft,false
