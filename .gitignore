@@ -10,6 +10,13 @@ server/src/generated/
 .playwright-cli/
 output/playwright/
 
+# Local reference materials, not part of the engineering repository
+功能参考/
+配色参考/
+*.docx
+*.xls
+*.xlsx
+
 # UniApp build artifacts
 frontend/uniapp/unpackage/
 
