@@ -7,6 +7,12 @@
       }
     },
     {
+      "path": "pages/rank/index",
+      "style": {
+        "navigationBarTitleText": "位次确认"
+      }
+    },
+    {
       "path": "pages/results/index",
       "style": {
         "navigationBarTitleText": "院校预测结果"
@@ -16,6 +22,12 @@
       "path": "pages/university/index",
       "style": {
         "navigationBarTitleText": "院校详情"
+      }
+    },
+    {
+      "path": "pages/major/index",
+      "style": {
+        "navigationBarTitleText": "专业预测"
       }
     },
     {
@@ -35,12 +47,25 @@
       "style": {
         "navigationBarTitleText": "AI 使用额度"
       }
+    },
+    {
+      "path": "pages/payment/index",
+      "style": {
+        "navigationBarTitleText": "AI 使用费用"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "高考志愿 AI 预测",
     "navigationBarBackgroundColor": "#F5F8FF",
-    "backgroundColor": "#F5F8FF"
+    "backgroundColor": "#F5F8FF",
+    "navigationStyle": "custom"
   }
 }
