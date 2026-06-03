@@ -62,9 +62,9 @@ button::after {
   position: sticky;
   top: 0;
   z-index: 30;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   width: min(100vw, var(--mobile-width));
   min-height: 58px;
   margin: 0 auto;
@@ -72,6 +72,18 @@ button::after {
   background: rgba(234, 246, 255, 0.88);
   backdrop-filter: blur(14px);
   box-sizing: border-box;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+}
+
+.topbar-right {
+  width: 36px;
+  height: 36px;
+  justify-self: end;
 }
 
 .brand {
@@ -117,12 +129,11 @@ button::after {
 }
 
 .route-title {
-  position: absolute;
-  left: 50%;
+  position: static;
+  justify-self: center;
   color: var(--ink);
   font-size: 16px;
   font-weight: 900;
-  transform: translateX(-50%);
 }
 
 .round-action {
