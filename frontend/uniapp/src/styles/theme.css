@@ -58,6 +58,10 @@ page {
   font-weight: 700;
 }
 
+.section-spacer {
+  margin-top: 14px;
+}
+
 .label,
 .meta,
 .warning {

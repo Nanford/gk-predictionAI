@@ -280,6 +280,7 @@ export const getPredictionExplanationContext = async (predictionId: number, user
     context: {
       predictionId,
       universityName: prediction.university.name,
+      rank: prediction.rank,
       probability: prediction.probability,
       probabilityLow: prediction.probabilityLow,
       probabilityHigh: prediction.probabilityHigh,

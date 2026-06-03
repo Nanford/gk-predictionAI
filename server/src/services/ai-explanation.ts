@@ -1,6 +1,7 @@
 interface ExplanationContext {
   predictionId: number;
   universityName: string;
+  rank: number;
   probability: number | null;
   probabilityLow: number | null;
   probabilityHigh: number | null;
@@ -54,23 +55,37 @@ const templateExplanation = (context: ExplanationContext): ExplanationResult => 
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((item) => typeof item === "string");
 
+const normalizeStringArray = (value: unknown, fieldName: string): string[] => {
+  if (isStringArray(value)) return value;
+  if (typeof value === "string" && value.trim()) return [value];
+  throw new Error(`DeepSeek response field ${fieldName} must be a string or string array`);
+};
+
+const softenDeterministicWording = (value: string): string =>
+  value
+    .replace(/几乎不可能被录取/g, "录取机会较低")
+    .replace(/不可能被录取/g, "录取机会较低")
+    .replace(/必然滑档/g, "滑档风险较高")
+    .replace(/必然/g, "可能")
+    .replace(/不能作为主要志愿/g, "不建议作为主要志愿")
+    .replace(/一定要/g, "建议");
+
+const softenItems = (items: string[]): string[] => items.map((item) => softenDeterministicWording(item));
+
 const parseContent = (value: string): ExplanationContent => {
   const parsed = JSON.parse(value) as Record<string, unknown>;
   if (
     typeof parsed.summary !== "string" ||
-    !isStringArray(parsed.reasoning) ||
-    !isStringArray(parsed.riskWarning) ||
-    !isStringArray(parsed.nextActions) ||
     typeof parsed.disclaimer !== "string"
   ) {
     throw new Error("DeepSeek response did not match the required explanation shape");
   }
   return {
-    summary: parsed.summary,
-    reasoning: parsed.reasoning,
-    riskWarning: parsed.riskWarning,
-    nextActions: parsed.nextActions,
-    disclaimer: parsed.disclaimer
+    summary: softenDeterministicWording(parsed.summary),
+    reasoning: softenItems(normalizeStringArray(parsed.reasoning, "reasoning")),
+    riskWarning: softenItems(normalizeStringArray(parsed.riskWarning, "riskWarning")),
+    nextActions: softenItems(normalizeStringArray(parsed.nextActions, "nextActions")),
+    disclaimer: softenDeterministicWording(parsed.disclaimer)
   };
 };
 
@@ -100,7 +115,7 @@ export const createExplanationService = (dependencies: ExplanationServiceDepende
               {
                 role: "system",
                 content:
-                  "你是高考志愿辅助分析助手。只能使用输入数据，不得承诺录取结果。输出 JSON，字段必须为 summary、reasoning、riskWarning、nextActions、disclaimer。"
+                  "你是高考志愿辅助分析助手。只能使用输入数据，不得承诺录取结果。不得使用“必录、保录、一定、必然、几乎不可能被录取”等确定性措辞。输出 JSON，字段必须为 summary、reasoning、riskWarning、nextActions、disclaimer。其中 reasoning、riskWarning、nextActions 必须是 string[]，即使只有一条也必须用数组。"
               },
               {
                 role: "user",

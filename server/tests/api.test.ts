@@ -1,5 +1,7 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
+import { prisma } from "../src/db/client.js";
+import { getPredictionExplanationContext } from "../src/services/prediction-service.js";
 
 const app = await buildApp({
   nodeEnv: "test",
@@ -74,6 +76,11 @@ describe("public platform API", () => {
     });
     expect(predictionResponse.statusCode).toBe(201);
     const prediction = predictionResponse.json<{ id: number }>();
+    const predictionOwner = await prisma.predictionRecord.findUniqueOrThrow({
+      where: { id: prediction.id },
+      select: { userId: true }
+    });
+    const { context } = await getPredictionExplanationContext(prediction.id, predictionOwner.userId);
 
     const explanationResponse = await app.inject({
       method: "POST",
@@ -90,6 +97,7 @@ describe("public platform API", () => {
     expect(explanationResponse.json()).toEqual(
       expect.objectContaining({ generatedBy: "template", quotaCharged: false })
     );
+    expect(context.rank).toBe(12000);
     expect(quotaResponse.json<{ available: number }>().available).toBe(3);
 
     const repeatedPredictionResponse = await app.inject({

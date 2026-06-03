@@ -11,6 +11,8 @@
         <text class="meta">生成方式：{{ explanation.generatedBy === "deepseek" ? "DeepSeek AI" : "规则模板回退" }}</text>
         <text v-for="item in explanation.reasoning" :key="item" class="meta">· {{ item }}</text>
         <text v-for="item in explanation.riskWarning" :key="item" class="warning">· {{ item }}</text>
+        <text class="section-title section-spacer">下一步建议</text>
+        <text v-for="item in explanation.nextActions" :key="item" class="meta">· {{ item }}</text>
       </template>
     </view>
     <button class="button button-light primary-wide" @click="openQuota">查看 AI 使用额度</button>
