@@ -54,7 +54,7 @@
       <DisclaimerBar compact />
 
       <view class="bottom-action">
-        <button class="button button-primary" :disabled="loading" @click="buyQuota">
+        <button class="button button-pay" :disabled="loading" @click="buyQuota">
           <text>{{ loading ? "正在模拟到账..." : `模拟确认支付 · ${selected} 次` }}</text>
           <AppIcon v-if="!loading" name="arrowRight" size="sm" />
         </button>

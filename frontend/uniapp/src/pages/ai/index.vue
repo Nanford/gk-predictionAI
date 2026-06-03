@@ -1,12 +1,6 @@
 <template>
-  <PageShell title="AI 解读" current="none">
+  <PageShell title="AI 分析" current="none">
     <view class="page">
-      <view>
-        <text class="eyebrow">DeepSeek 结构化解释</text>
-        <text class="page-title">AI 辅助分析</text>
-        <text class="hero-subtitle">AI 只解释已经计算完成的结构化概率，不会修改概率，也不替代最终志愿决策。</text>
-      </view>
-
       <view v-if="loading" class="analysis-loading card">
         <text class="loading-dot"></text>
         <text class="section-title">正在整理风险依据</text>
@@ -14,25 +8,55 @@
       </view>
 
       <view v-else-if="explanation" class="content-stack">
-        <view class="summary-card card">
-          <text class="meta">生成方式：{{ explanation.generatedBy === "deepseek" ? "DeepSeek AI" : "规则模板回退" }}</text>
-          <text class="summary-title">{{ explanation.summary }}</text>
-          <text class="meta">{{ explanation.quotaCharged ? "本次消耗 1 次 AI 使用额度" : "本次未扣除 AI 使用额度" }}</text>
+        <view class="result-hero">
+          <view class="school-head">
+            <view>
+              <text class="school-name">AI 辅助分析</text>
+              <text class="school-meta">生成方式：{{ explanation.generatedBy === "deepseek" ? "DeepSeek AI" : "规则模板回退" }}</text>
+            </view>
+            <text class="tag safe">{{ explanation.quotaCharged ? "消耗 1 次" : "未扣额度" }}</text>
+          </view>
+          <view class="result-num">
+            <view>
+              <text class="summary-title">{{ explanation.summary }}</text>
+              <text class="school-meta">AI 只解释已计算的结构化概率，不修改概率。</text>
+            </view>
+          </view>
         </view>
 
-        <view class="card analysis-section">
-          <view class="section-head"><text class="section-title">关键依据</text><text class="muted">结构化数据</text></view>
-          <text v-for="item in explanation.reasoning" :key="item" class="meta">· {{ item }}</text>
+        <view class="ai-card">
+          <text class="section-title">关键依据</text>
+          <view class="reason-list">
+            <view v-for="(item, index) in explanation.reasoning" :key="item" class="reason">
+              <text class="reason-index">{{ index + 1 }}</text>
+              <text>{{ item }}</text>
+            </view>
+          </view>
         </view>
 
-        <view class="card analysis-section warning-card">
-          <view class="section-head"><text class="section-title">风险提示</text><text class="muted">仍需人工核对</text></view>
-          <text v-for="item in explanation.riskWarning" :key="item" class="warning">· {{ item }}</text>
+        <view class="ai-card warning-card">
+          <text class="section-title">风险提示</text>
+          <view class="reason-list">
+            <view v-for="(item, index) in explanation.riskWarning" :key="item" class="reason">
+              <text class="reason-index">{{ index + 1 }}</text>
+              <text>{{ item }}</text>
+            </view>
+          </view>
         </view>
 
-        <view class="card analysis-section">
-          <view class="section-head"><text class="section-title">下一步建议</text><text class="muted">降低填报风险</text></view>
-          <text v-for="item in explanation.nextActions" :key="item" class="meta">· {{ item }}</text>
+        <view class="card pay-card">
+          <view class="school-head">
+            <view>
+              <text class="school-name">下一步建议</text>
+              <text class="school-meta">结合官方招生计划继续核对</text>
+            </view>
+          </view>
+          <view class="reason-list">
+            <view v-for="(item, index) in explanation.nextActions" :key="item" class="reason">
+              <text class="reason-index">{{ index + 1 }}</text>
+              <text>{{ item }}</text>
+            </view>
+          </view>
         </view>
       </view>
 
@@ -91,7 +115,7 @@ const openQuota = () => uni.navigateTo({ url: "/pages/quota/index" });
 
 <style scoped>
 .content-stack,
-.analysis-section {
+.reason-list {
   display: grid;
   gap: 12px;
 }
@@ -114,26 +138,97 @@ const openQuota = () => uni.navigateTo({ url: "/pages/quota/index" });
   animation: spin 800ms linear infinite;
 }
 
-.summary-card {
-  color: #fff;
-  background: linear-gradient(135deg, #2f80ed, #20bfa9);
+.result-hero {
+  padding: 17px;
+  border: 1px solid #e5eef8;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(32, 191, 169, 0.2), transparent 38%),
+    linear-gradient(135deg, #ffffff, #f7fcff);
+  box-shadow: 0 12px 28px rgba(47, 128, 237, 0.1);
 }
 
-.summary-card .meta {
-  color: rgba(255, 255, 255, 0.76);
+.school-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.school-name,
+.school-meta,
+.summary-title {
+  display: block;
+}
+
+.school-name {
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.school-meta {
+  margin-top: 6px;
+  color: #9ca3af;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .summary-title {
-  display: block;
-  margin: 12px 0;
-  font-size: 19px;
-  font-weight: 800;
-  line-height: 1.7;
+  margin-top: 12px;
+  color: #1f2937;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.55;
+}
+
+.ai-card {
+  padding: 14px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(135deg, rgba(47, 128, 237, 0.45), rgba(32, 191, 169, 0.38)) border-box;
 }
 
 .warning-card {
-  border-color: rgba(255, 181, 71, 0.26);
-  background: #fffdf8;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(135deg, rgba(255, 181, 71, 0.42), rgba(255, 143, 61, 0.22)) border-box;
+}
+
+.reason {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 14px;
+  color: #6b7280;
+  background: #f8fbff;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.reason-index {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  flex: 0 0 18px;
+  border-radius: 50%;
+  color: #047857;
+  background: #e8fff8;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pay-card {
+  border-color: rgba(255, 181, 71, 0.28);
+  background: linear-gradient(135deg, #fff7e8, #ffffff);
+}
+
+.tag.safe {
+  color: #047857;
+  background: #e8fff8;
 }
 
 @keyframes spin {

@@ -3,7 +3,6 @@
     <view class="page results-page">
       <view class="candidate-strip">
         <view class="candidate-cell">
-          <view class="row-icon"><AppIcon name="score" size="sm" /></view>
           <view>
             <text>{{ subjectLabel }} · 广东省</text>
             <text class="strip-value">{{ score ? `${score} 分` : "未填分数" }}</text>
@@ -14,25 +13,15 @@
             <text>参考位次</text>
             <text class="strip-value">#{{ rank.toLocaleString("zh-CN") }}</text>
           </view>
-          <view class="row-icon"><AppIcon name="rank" size="sm" /></view>
         </view>
-      </view>
-
-      <view>
-        <view class="eyebrow">
-          <AppIcon name="target" size="xs" />
-          <text>院校最低门槛参考</text>
-        </view>
-        <text class="page-title">院校推荐</text>
-        <text class="hero-subtitle">列表展示符合选科要求的最低门槛专业组。进入详情后可逐组查看，再生成院校或专业 AI 解读。</text>
       </view>
 
       <view class="toolbar">
-        <view class="chip-row">
+        <view class="tabs">
           <button
             v-for="filter in filters"
             :key="filter"
-            class="chip"
+            class="tab"
             :class="{ active: activeFilter === filter }"
             @click="activeFilter = filter"
           >
@@ -154,11 +143,10 @@ const openVolunteers = () => uni.navigateTo({ url: "/pages/volunteers/index" });
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  padding: 13px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: 24px;
+  padding: 12px 14px;
+  border: 1px solid #e5eef8;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 12px 34px rgba(25, 49, 78, 0.08);
 }
 
 .candidate-cell {
@@ -168,7 +156,7 @@ const openVolunteers = () => uni.navigateTo({ url: "/pages/volunteers/index" });
   min-width: 0;
 }
 
-.candidate-cell view:not(.row-icon) {
+.candidate-cell view {
   display: grid;
   gap: 3px;
 }
@@ -184,7 +172,7 @@ const openVolunteers = () => uni.navigateTo({ url: "/pages/volunteers/index" });
 }
 
 .candidate-strip .strip-value {
-  color: #185fbe;
+  color: #2f80ed;
   font-size: 16px;
   font-weight: 800;
 }
@@ -202,7 +190,7 @@ const openVolunteers = () => uni.navigateTo({ url: "/pages/volunteers/index" });
   padding: 0 14px;
   border: 1px solid rgba(196, 219, 238, 0.86);
   border-radius: 18px;
-  background: rgba(250, 253, 255, 0.92);
+  background: #fff;
   box-sizing: border-box;
 }
 
