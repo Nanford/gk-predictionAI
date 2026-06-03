@@ -2,18 +2,27 @@
   <PageShell title="院校推荐" back-url="/pages/rank/index" current="none">
     <view class="page results-page">
       <view class="candidate-strip">
-        <view>
-          <text>{{ subjectLabel }} · 广东省</text>
-          <text class="strip-value">{{ score ? `${score} 分` : "未填分数" }}</text>
+        <view class="candidate-cell">
+          <view class="row-icon"><AppIcon name="score" size="sm" /></view>
+          <view>
+            <text>{{ subjectLabel }} · 广东省</text>
+            <text class="strip-value">{{ score ? `${score} 分` : "未填分数" }}</text>
+          </view>
         </view>
-        <view>
-          <text>参考位次</text>
-          <text class="strip-value">#{{ rank.toLocaleString("zh-CN") }}</text>
+        <view class="candidate-cell right">
+          <view>
+            <text>参考位次</text>
+            <text class="strip-value">#{{ rank.toLocaleString("zh-CN") }}</text>
+          </view>
+          <view class="row-icon"><AppIcon name="rank" size="sm" /></view>
         </view>
       </view>
 
       <view>
-        <text class="eyebrow">院校最低门槛参考</text>
+        <view class="eyebrow">
+          <AppIcon name="target" size="xs" />
+          <text>院校最低门槛参考</text>
+        </view>
         <text class="page-title">院校推荐</text>
         <text class="hero-subtitle">列表展示符合选科要求的最低门槛专业组。进入详情后可逐组查看，再生成院校或专业 AI 解读。</text>
       </view>
@@ -30,7 +39,10 @@
             {{ filter }}
           </button>
         </view>
-        <input v-model="keyword" class="input search-input" placeholder="搜索院校名称" />
+        <view class="search-box">
+          <AppIcon name="search" size="sm" />
+          <input v-model="keyword" class="search-input" placeholder="搜索院校名称" />
+        </view>
       </view>
 
       <view v-if="loading" class="empty card">正在加载院校数据...</view>
@@ -44,7 +56,10 @@
         />
       </view>
       <view v-if="!loading && filteredItems.length === 0" class="empty card">当前条件暂无已入库可预测院校。</view>
-      <button class="button button-light primary-wide" @click="openVolunteers">查看志愿单与梯度诊断</button>
+      <button class="button button-light primary-wide" @click="openVolunteers">
+        <AppIcon name="list" size="sm" />
+        <text>查看志愿单与梯度诊断</text>
+      </button>
       <DisclaimerBar compact />
     </view>
   </PageShell>
@@ -53,6 +68,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
+import AppIcon from "../../components/AppIcon.vue";
 import DisclaimerBar from "../../components/DisclaimerBar.vue";
 import PageShell from "../../components/PageShell.vue";
 import PredictionCard from "../../components/PredictionCard.vue";
@@ -137,19 +153,29 @@ const openVolunteers = () => uni.navigateTo({ url: "/pages/volunteers/index" });
 .candidate-strip {
   display: flex;
   justify-content: space-between;
-  padding: 13px 14px;
-  border: 1px solid rgba(47, 128, 237, 0.14);
-  border-radius: 18px;
-  background: linear-gradient(135deg, #eaf3ff, #f8fffd);
+  gap: 10px;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 12px 34px rgba(25, 49, 78, 0.08);
 }
 
-.candidate-strip view {
+.candidate-cell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.candidate-cell view:not(.row-icon) {
   display: grid;
   gap: 3px;
 }
 
-.candidate-strip view:last-child {
+.candidate-cell.right {
   text-align: right;
+  justify-content: flex-end;
 }
 
 .candidate-strip text {
@@ -163,20 +189,28 @@ const openVolunteers = () => uni.navigateTo({ url: "/pages/volunteers/index" });
   font-weight: 800;
 }
 
-.page-title {
-  display: block;
-  margin-top: 12px;
-  font-size: 26px;
-  font-weight: 800;
-}
-
 .toolbar {
   display: grid;
   gap: 10px;
 }
 
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(196, 219, 238, 0.86);
+  border-radius: 18px;
+  background: rgba(250, 253, 255, 0.92);
+  box-sizing: border-box;
+}
+
 .search-input {
-  min-height: 42px;
+  flex: 1;
+  min-height: 46px;
+  color: #172435;
+  font-size: 15px;
 }
 
 .result-list {

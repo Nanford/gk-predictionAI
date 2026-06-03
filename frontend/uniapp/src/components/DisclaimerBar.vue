@@ -1,10 +1,13 @@
 <template>
   <view class="disclaimer">
+    <AppIcon name="shield" size="sm" />
     <text>{{ compact ? shortText : fullText }}</text>
   </view>
 </template>
 
 <script setup lang="ts">
+import AppIcon from "./AppIcon.vue";
+
 withDefaults(defineProps<{ compact?: boolean }>(), { compact: false });
 
 const shortText = "预测结果仅供辅助参考，不代表最终录取结果。";

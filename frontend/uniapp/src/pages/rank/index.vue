@@ -2,12 +2,16 @@
   <PageShell title="位次确认" back-url="/pages/home/index" current="none">
     <view class="page">
       <view>
-        <text class="eyebrow">位次确认</text>
+        <view class="eyebrow">
+          <AppIcon name="rank" size="xs" />
+          <text>位次确认</text>
+        </view>
         <text class="page-title">确认你的参考位次</text>
         <text class="hero-subtitle">位次比单年分数更适合用于跨年度比较。当前正式预测以你填写的全省位次为准。</text>
       </view>
 
       <view class="rank-hero card">
+        <view class="rank-hero-icon"><AppIcon name="target" size="lg" /></view>
         <text class="muted">{{ subjectLabel }} · 广东省</text>
         <text class="rank-number">#{{ rankText }}</text>
         <text class="muted">全省参考位次</text>
@@ -27,8 +31,14 @@
       <DisclaimerBar compact />
 
       <view class="bottom-action">
-        <button class="button button-ghost" @click="goHome">重新填写</button>
-        <button class="button button-primary" @click="openResults">查看院校推荐</button>
+        <button class="button button-ghost" @click="goHome">
+          <AppIcon name="back" size="sm" />
+          <text>重新填写</text>
+        </button>
+        <button class="button button-primary" @click="openResults">
+          <text>查看院校推荐</text>
+          <AppIcon name="arrowRight" size="sm" />
+        </button>
       </view>
     </view>
   </PageShell>
@@ -37,6 +47,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
+import AppIcon from "../../components/AppIcon.vue";
 import DisclaimerBar from "../../components/DisclaimerBar.vue";
 import PageShell from "../../components/PageShell.vue";
 import type { SubjectType } from "../../types/prediction";
@@ -64,18 +75,14 @@ const openResults = () => {
 </script>
 
 <style scoped>
-.page-title {
-  display: block;
-  margin-top: 12px;
-  font-size: 26px;
-  font-weight: 800;
-}
-
 .rank-hero {
   position: relative;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(135deg, #2f80ed, #20bfa9);
+  background:
+    radial-gradient(circle at 88% 16%, rgba(255, 255, 255, 0.24), transparent 7rem),
+    linear-gradient(135deg, #1288f1, #10b8aa);
+  box-shadow: 0 24px 54px rgba(18, 136, 241, 0.24);
 }
 
 .rank-hero .muted {
@@ -85,9 +92,21 @@ const openResults = () => {
 .rank-number {
   display: block;
   margin-top: 16px;
-  font-size: 52px;
-  font-weight: 800;
+  font-size: 58px;
+  font-weight: 950;
   letter-spacing: -0.08em;
+}
+
+.rank-hero-icon {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .score-badge {
